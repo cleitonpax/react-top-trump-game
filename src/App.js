@@ -7,7 +7,7 @@ function App() {
   const socketRef = useRef(null);
 
   useEffect(() => {
-    const socket = new WebSocket("ws://localhost:8080");
+    const socket = new WebSocket("ws://0.tcp.sa.ngrok.io:10856/ws/chat/lobby/");
 
     socketRef.current = socket;
 
@@ -43,7 +43,7 @@ function App() {
     event.preventDefault();
 
     if (socketRef.current && connected) {
-      socketRef.current.send(username);
+      socketRef.current.send(JSON.stringify({ username: username }));
     }
   };
 
