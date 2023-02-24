@@ -1,13 +1,31 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, createContext, useEffect } from "react";
+import RoutesComponent from "./routes";
+
+export const SessionContext = createContext();
 
 function App() {
-  const [username, setUsername] = useState("");
-  const [connected, setConnected] = useState(false);
-  const [message, setMessage] = useState("");
   const socketRef = useRef(null);
+  const [connected, setConnected] = useState(false);
+  const [payload, setPayload] = useState({
+    route: "signIn",
+    user: {
+      username: null,
+      ip: null,
+      id: null,
+    },
+    channel: { 
+      name: null,
+      users: null,
+      id: null,
+      userCounter: null,
+    },
+    users: [],
+    channels: [],
+  });
+  const [session, setSession] = useState({ socketRef, connected, payload });
 
   useEffect(() => {
-    const socket = new WebSocket("ws://0.tcp.sa.ngrok.io:10856/ws/chat/lobby/");
+    const socket = new WebSocket("ws://0.tcp.sa.ngrok.io:15392/ws/chat/lobby/");
 
     socketRef.current = socket;
 
@@ -18,7 +36,8 @@ function App() {
 
     socket.onmessage = (event) => {
       console.log("Received message:", event.data);
-      setMessage(event.data);
+      setPayload(event.data);
+      // setSession({ socketRef, connected, payload });
     };
 
     socket.onerror = (error) => {
@@ -35,50 +54,16 @@ function App() {
     };
   }, []);
 
-  const handleInputChange = (event) => {
-    setUsername(event.target.value);
-  };
-
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-
-    if (socketRef.current && connected) {
-      socketRef.current.send(JSON.stringify({ username: username }));
-    }
-  };
-
   return (
-    <div className="container rounded p-3 d-flex align-items-center flex-column">
-      <h1 className="text-center mb-5 text-white">React Top Trump</h1>
-      <form
-        onSubmit={handleFormSubmit}
-        className="text-center d-flex flex-column"
-      >
-        <div className="form-group">
-          <input
-            type="text"
-            className="form-control text-center p-3"
-            placeholder="Type your username"
-            value={username}
-            onChange={handleInputChange}
-          />
-        </div>
-        <button type="submit" className="btn btn-primary mt-3 btn-block btn-lg">
-          Enter
-        </button>
-      </form>
-      <footer className="text-center mb-5 text-white fixed-bottom opacity-50">
-        2023 by @cleitonpax and @garusocruz
-      </footer>
+    <SessionContext.Provider value={session}>
+      <RoutesComponent />
       {connected && (
-        <p className="text-center mt-5 text-success">
-          Connected to server. Last message received: <strong>{message}</strong>
-        </p>
+        <p className="text-center mt-5 text-success">Connected to server</p>
       )}
       {!connected && (
         <p className="text-center mt-5 text-warning">Not connected to server</p>
       )}
-    </div>
+    </SessionContext.Provider>
   );
 }
 
