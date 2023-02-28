@@ -1,9 +1,7 @@
 import React from "react";
 import { SessionContext } from "../App";
-import { useNavigate  } from 'react-router-dom';
 
-function Lobby() {
-  const navigate = useNavigate();
+function Board() {
   const session = React.useContext(SessionContext);
   const name =
     session.payload && session.payload.user && session.payload.user.username;
@@ -17,32 +15,26 @@ function Lobby() {
     console.log("session.payload", session.payload)
   }, [session.payload]);
 
-  function play() {
-    navigate('/board');
-  }
-
   return (
     <div className="container p-3 d-flex align-items-center flex-column text-white">
-      <h1 className="text-center mb-5">React Top Trump</h1>
-      <h4 className="text-center mb-5">Welcome {name}</h4>
+      <div className="text-center mb-5 mt-3 fixed-top">React Top Trump</div>
+      <h4 className="text-center mb-5">{name}</h4>
       <div className="row">
         <p className="text-center mb-0" style={{ fontSize: "80px" }}>
           {counter}
         </p>
         <p className="text-center mb-2">users are waiting to play</p>
+      </div>
+      <footer className="text-center mb-0 fixed-bottom">
         <button
-          onClick={play}
           type="button"
-          className="btn btn-success text-white p-3 mt-3 btn-block btn-lg"
+          className="btn btn-success border-0 text-white rounded-0 p-3 mt-3 btn-block btn-lg w-100"
         >
           PLAY
         </button>
-      </div>
-      <footer className="text-center mb-5 fixed-bottom opacity-50">
-        2023 by @cleitonpax and @garusocruz
       </footer>
     </div>
   );
 }
 
-export default Lobby;
+export default Board;

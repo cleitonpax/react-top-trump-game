@@ -1,5 +1,5 @@
 import React, { useState, useRef, createContext, useEffect } from "react";
-import RoutesComponent from "./routes";
+import RoutesComponent from "./Routes";
 
 export const SessionContext = createContext();
 
